@@ -1,3 +1,4 @@
+HEAD
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -10,3 +11,7 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+# Job-Seeker
+🧑‍💼 Job Seeker – A Full Stack Job Portal built with React.js, Tailwind CSS, Supabase, Clerk, and Shadcn UI. Search, apply, post, and manage jobs with authentication, onboarding, filtering, and real-time data – perfect for your developer portfolio.
+64150c5433252ce79c8dad64d91f12d3a8731523
