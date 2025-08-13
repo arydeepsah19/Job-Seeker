@@ -115,7 +115,7 @@
     @apply bg-gradient-to-br from-gray-500 via-gray-200 to-white
   }
   .gradient-title{
-    @apply gradient text-transparent bg-clip-text;
+     @apply bg-gradient-to-br from-gray-500 via-gray-200 to-white text-transparent bg-clip-text;
   }
 }
 
