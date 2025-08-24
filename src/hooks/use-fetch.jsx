@@ -6,7 +6,7 @@ const useFetch = (cb, options = {})=>{
     const [loading,setLoading] = useState(null);
     const [error, setError] = useState(null);
 
-    const {session} = useSession();
+    const { session } = useSession();
 
     const fn = async (...args)=>{
         setLoading(true);
