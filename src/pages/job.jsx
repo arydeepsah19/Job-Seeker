@@ -32,7 +32,7 @@ const JobPage= ()=> {
     if(isLoaded) fnJobs();
   },[isLoaded])
 
-  if(!isLoaded){
+  if(!isLoaded && loadingJobs){
     return <BarLoader className= "mb-4" width = {"100%"} color="#36d7b7"/>
   }
 

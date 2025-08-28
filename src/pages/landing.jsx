@@ -13,7 +13,7 @@ const LandingPage= ()=> {
       <section className="text-center">
         <h1 className="flex flex-col items-center justify-center gradient-title text-4xl font-extrabold sm:text-6xl lg:text-8xl tracking-tighter py-4">Find your Dream Job{" "}
           <span className="flex items-center gap-2 lg:gap-6">
-            and get {" "} <img src="/logo.png" alt="logo" className="h-14 sm:h-24 lg:h-32" />
+            and get {" "} <img src="/log1.png" alt="logo" className="h-24 sm:h-32 lg:h-40" />
           </span>
         </h1>
         <p className="text-gray-300 sm:mt-4 text-xs lg:text-xl">
@@ -43,7 +43,47 @@ const LandingPage= ()=> {
       </Carousel>
 
       {/* banner */}
-          <img src="/banner.jpeg" alt="job Seeker" className="w-full" />
+      <section className="relative flex items-center justify-center py-16">
+        <div className="relative w-[95%] sm:w-[90%] h-[60vh] rounded-3xl overflow-hidden shadow-2xl 
+                        transform hover:rotate-1 hover:scale-[1.02] transition-all duration-700 bg-gray-900">
+          
+          {/* Background Image */}
+          <img
+            src="/b1.png"
+            alt="JobSeeker Banner"
+            className="absolute inset-0 w-full h-full object-cover opacity-40"
+          />
+
+          {/* Futuristic Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/60 via-purple-900/60 to-black/70"></div>
+
+          {/* Glow Borders */}
+          <div className="absolute inset-0 border-2 border-blue-500/30 rounded-3xl animate-pulse"></div>
+
+          {/* Stats Content */}
+          <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-6">
+            <h2 className="text-3xl sm:text-5xl font-extrabold mb-8 drop-shadow-lg">
+              🚀 Welcome to <span className="text-blue-400">JobSeeker</span>
+            </h2>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
+              <div className="bg-white/10 backdrop-blur-lg px-6 py-4 rounded-xl shadow-lg border border-white/20 hover:scale-105 transition">
+                <h3 className="text-4xl font-bold text-blue-400">10,000+</h3>
+                <p className="text-gray-300">Jobs Posted</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-lg px-6 py-4 rounded-xl shadow-lg border border-white/20 hover:scale-105 transition">
+                <h3 className="text-4xl font-bold text-purple-400">5,000+</h3>
+                <p className="text-gray-300">Companies</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-lg px-6 py-4 rounded-xl shadow-lg border border-white/20 hover:scale-105 transition">
+                <h3 className="text-4xl font-bold text-pink-400">50,000+</h3>
+                <p className="text-gray-300">Job Seekers</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* card */}
       <section className="grid grid-cols-1 md:grid-col-2 gap-4">
