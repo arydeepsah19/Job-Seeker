@@ -61,7 +61,7 @@ const AddCompanyDrawer = ({fetchCompanies}) => {
             {errors.name && (<p className="text-red-500 px-4">{errors.name.message}</p>)}
             {errors.logo && (<p className="text-red-500 px-4">{errors.logo.message}</p>)}
             {errorAddCompany && (<p className="text-red-500 px-4">{errorAddCompany.message}</p>)}
-            {loadingAddCompany && <BarLoader width={"100%"} color="#36d7b7" />}
+            {loadingAddCompany && <BarLoader className="mt-2" width={"100%"} color="#36d7b7" />}
             <DrawerFooter>
             <DrawerClose asChild>
                 <Button variant="secondary" type="button">Cancel</Button>
