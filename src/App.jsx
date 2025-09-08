@@ -13,7 +13,6 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./components/theme-provider"
 import ProtectedRoute from "./components/protected-route";
 
-
 const router = createBrowserRouter([
   {
     element: <AppLayout />,

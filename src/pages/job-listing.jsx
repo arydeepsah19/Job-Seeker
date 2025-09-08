@@ -103,7 +103,7 @@ const JobListing= ()=> {
       </div>
 
       {loadingJobs && (
-        <BarLoader className= "mb-4" width = {"100%"} color="#36d7b7"/>
+        <BarLoader className= "m-2" width = {"100%"} color="#36d7b7"/>
       )}
 
       {loadingJobs === false && (

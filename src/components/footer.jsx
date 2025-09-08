@@ -13,7 +13,7 @@ const Footer = () => {
       <div className="relative h-1 w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-purple-500/40"></div>
 
       {/* Main Content */}
-      <div className="relative max-w-6xl mx-auto p-10 grid md:grid-cols-4 gap-30 text-center md:text-left">
+      <div className="relative max-w-6xl mx-auto p-10 gap-12 grid md:grid-cols-4 md:gap-30 text-center md:text-left">
         
         {/* About */}
         <div>
@@ -40,7 +40,9 @@ const Footer = () => {
           <h2 className="text-lg font-semibold text-white mb-3">Contact</h2>
           <p className="text-sm">
             <FaEnvelope className="inline mr-2 text-blue-400" />
-            support@jobseeker.com
+            <a href="mailto:jobseekersup25@gmail.com?subject=Support Request&body=Hello JobSeeker Team," target="_blank">
+              support@jobseeker.com
+            </a>
           </p>
         </div>
 

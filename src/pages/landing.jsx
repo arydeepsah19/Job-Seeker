@@ -117,6 +117,7 @@ const LandingPage= ()=> {
           )
         })}
       </Accordion>
+      
     </main>
   )
 }

@@ -9,6 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useFetch from "../hooks/use-fetch";
 import { applyToJob } from "../api/apiApplication";
 import { BarLoader } from "react-spinners";
+import { useUser } from "@clerk/clerk-react";
+import Swal from "sweetalert2";
 
 
 const schema = z.object({
@@ -22,25 +24,79 @@ const schema = z.object({
 
 const ApplyJobDrawer = ({user, job, applied=false, fetchJob}) => {
 
+    const { user: clerkUser } = useUser();
+
     const {register, handleSubmit, control, formState:{errors}, reset,}= useForm({
         resolver: zodResolver(schema)
     })
 
     const {loading: loadingApply, error: errorApply, fn: fnApply} = useFetch(applyToJob);
 
-    const onSubmit = (data) => {
-        fnApply({
-            ...data,
-            job_id: job.id,
-            candidate_id: user.id,
-            name: user.fullName,
-            status: "applied",
-            resume: data.resume[0],
-        }).then(()=>{
-            fetchJob();
-            reset();
-        })
+    const onSubmit = async (data) => {
+    try {
+      await fnApply({
+        ...data,
+        job_id: job.id,
+        candidate_id: user.id,
+        name: user.fullName,
+        status: "applied",
+        resume: data.resume[0],
+      });
+
+      fetchJob();
+      reset();
+
+      // ✅ Send confirmation email to applicant + recruiter
+      const response = await fetch(
+        "https://spqpxjcfwynwxfgcfday.supabase.co/functions/v1/super-processor",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            type: "apply",
+            email: clerkUser?.primaryEmailAddress?.emailAddress,
+            recruiterEmail: job.recruiter_email,   // ✅ comes directly from jobs table
+            jobTitle: job.title,
+            companyName: job.company?.name,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        Swal.fire({
+          title: '🎉 Application Submitted!',
+          html: `
+            <p>You’ve applied for <strong>${job.title}</strong> at <strong>${job.company?.name}</strong>.</p>
+            <p>A confirmation email was sent to <strong>${clerkUser?.primaryEmailAddress?.emailAddress}</strong>.</p>
+            <p>Stay tuned for the next steps!</p>
+          `,
+          confirmButtonText: 'Awesome!',
+          confirmButtonColor: '#2563eb',
+          background: '#f0f9ff',
+        });
+      } else {
+        console.error("Email failed:", await response.text());
+        Swal.fire({
+          title: "📬 Submitted, but email failed!",
+          text: "We couldn’t send a confirmation email, but your application was received.",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      Swal.fire({
+        title: "❌ Oops!",
+        text: "Something went wrong while submitting your application. Please try again.",
+        icon: "error",
+        confirmButtonText: "Retry",
+      });
     }
+  };
+
 
   return (
     <Drawer open = {applied ?false : undefined}>
