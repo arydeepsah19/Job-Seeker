@@ -66,7 +66,7 @@ const Header = () => {
       </nav>
 
       {showSignIn && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50" onClick={handleOverlayClick}> 
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50" onClick={handleOverlayClick}> 
           <SignIn 
             signUpForceRedirectUrl="/onboarding"
             fallbackForceRedirectUrl="/onboarding"
@@ -78,3 +78,4 @@ const Header = () => {
 }
 
 export default Header;
+
