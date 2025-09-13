@@ -64,81 +64,36 @@ export async function getApplication(token, {user_id} ) {
     return data;
 }
 
-// export async function withdrawApplication(token, { application_id, resumeUrl }) {
-//     const supabase = await supabaseClient(token);
-
-//     // 1. Delete application row
-//     const { error: deleteError } = await supabase
-//         .from("applications")
-//         .delete()
-//         .eq("id", application_id);
-
-//     if (deleteError) {
-//         console.error("Error deleting application:", deleteError);
-//         return { success: false, error: deleteError };
-//     }
-
-//     // 2. Delete resume file if exists
-//     if (resumeUrl) {
-//         try {
-//         // Extract file name from the resume URL
-//         const fileName = resumeUrl.replace(
-//             `${supabaseUrl}/storage/v1/object/public/resumes/`,
-//             ""
-//         );
-
-//         const { error: storageError } = await supabase.storage
-//             .from("resumes")
-//             .remove([fileName]);
-
-//         if (storageError) {
-//             console.error("Error deleting resume file:", storageError);
-//             // Not fatal — application is already withdrawn
-//         }
-//         } catch (err) {
-//         console.error("Error parsing resume URL:", err);
-//         }
-//     }
-
-//     return { success: true };
-// }
 
 export async function withdrawApplication(token, { application_id, resumeUrl }) {
   const supabase = await supabaseClient(token);
 
   try {
-    console.log("🔎 withdrawApplication called with:", {
-      application_id,
-      resumeUrl,
-    });
+    // 1️⃣ Get job status from application
+    const { data: application, error: appError } = await supabase
+      .from("applications")
+      .select("id, job_id, jobs(isOpen)")
+      .eq("id", application_id)
+      .single();
 
-    // 1. Delete application row from table
+    if (appError || !application) throw new Error("Application not found.");
+
+    if (!application.jobs?.isOpen) {
+      return { success: false, message: "Hiring is closed. Withdrawals are not allowed." };
+    }
+
+    // 2️⃣ Delete application
     const { error: deleteError } = await supabase
       .from("applications")
       .delete()
       .eq("id", application_id);
 
-    if (deleteError) {
-      console.error("❌ Error deleting application:", deleteError);
-      throw deleteError;
-    }
-    console.log("✅ Application deleted successfully");
+    if (deleteError) throw deleteError;
 
-    // 2. Delete resume file from storage (if exists)
+    // 3️⃣ Delete resume file (optional cleanup)
     if (resumeUrl) {
-      // Supabase storage remove() needs the file path (not the full public URL)
       const fileName = resumeUrl.split("/").pop();
-
-      const { error: storageError } = await supabase.storage
-        .from("resumes")
-        .remove([fileName]);
-
-      if (storageError) {
-        console.error("⚠️ Error deleting resume file:", storageError);
-        // don’t throw here → allow app delete to succeed even if file cleanup fails
-      } else {
-        console.log("✅ Resume file deleted:", fileName);
-      }
+      await supabase.storage.from("resumes").remove([fileName]);
     }
 
     return { success: true };
@@ -147,3 +102,4 @@ export async function withdrawApplication(token, { application_id, resumeUrl }) 
     throw err;
   }
 }
+

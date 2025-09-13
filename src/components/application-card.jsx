@@ -16,6 +16,8 @@ const   ApplicationCard = ({application, isCandidate = false}) => {
   const {loading: loadingHiringStatus, fn: fnHiringStatus} = useFetch(updateApplicationStatus,{
     application_id: application?.id,
   })
+
+   console.log("application data:", application?.job?.company?.name);
   
   const handleStatusChange = (status)=>{
     fnHiringStatus(status)

@@ -20,11 +20,13 @@ const JobPage = () => {
   const { fn: fnJobs, data: job, loading: loadingJobs } = useFetch(getSingleJob, { job_id: id });
   const { fn: fnHiringStatus, loading: loadingHiringStatus } = useFetch(updateHiringStatus, { job_id: id });
 
-
   // Check applications
   const myApplication = job?.application?.find(
     (ap) => ap.candidate_id === user?.id
   );
+
+
+ 
 
   const { fn: fnWithdraw, loading: loadingWithdraw } = useFetch(withdrawApplication, { application_id: myApplication?.id, resumeUrl: myApplication?.resume});
 
@@ -84,68 +86,79 @@ const JobPage = () => {
       {job?.recruiter_id !== user?.id && (
         myApplication ? (
           <Button
-  variant="destructive"
-  disabled={loadingWithdraw}
-  onClick={async () => {
-    if (!myApplication?.id) {
-      console.error("❌ Cannot withdraw: application ID is missing", myApplication);
-      return;
-    }
+            variant="destructive"
+            disabled={loadingWithdraw}
+            onClick={async () => {
+              if (!myApplication?.id) {
+                console.error("❌ Cannot withdraw: application ID is missing", myApplication);
+                return;
+              }
 
-    try {
-      // 1️⃣ Withdraw application from DB
-      await fnWithdraw({
-        application_id: myApplication.id,
-        resumeUrl: myApplication.resume
-      });
+              try {
+                // 1️⃣ Call API
+                const result = await fnWithdraw({
+                  application_id: myApplication.id,
+                  resumeUrl: myApplication.resume,
+                });
 
-      fnJobs(); // refresh job data
+                // 2️⃣ If backend blocks withdrawal → show alert
+                if (!result?.success) {
+                  Swal.fire({
+                    title: "🚫 Hiring Closed",
+                    text: result?.message || "You cannot withdraw after hiring is closed.",
+                    icon: "warning",
+                    confirmButtonText: "OK",
+                  });
+                  return;
+                }
 
-      // 2️⃣ Notify recruiter via Edge Function
-      await fetch("https://spqpxjcfwynwxfgcfday.supabase.co/functions/v1/super-processor", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          type: "withdraw",
-          email: user?.primaryEmailAddress?.emailAddress, 
-          jobTitle: job.title,
-          recruiterEmail: job?.recruiter_email
-        }),
-      });
+                // 3️⃣ Refresh job data
+                await fnJobs();
 
-      // 3️⃣ SweetAlert confirmation
-      Swal.fire({
-        title: '🗑️ Application Withdrawn!',
-        text: `You have successfully withdrawn your application for ${job.title}.`,
-        icon: 'success',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#2563eb',
-        background: '#f0f9ff'
-      });
+                // 4️⃣ Notify recruiter via Supabase Edge Function
+                await fetch("https://spqpxjcfwynwxfgcfday.supabase.co/functions/v1/super-processor", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+                  },
+                  body: JSON.stringify({
+                    type: "withdraw",
+                    email: user?.primaryEmailAddress?.emailAddress,
+                    jobTitle: job.title,
+                    recruiterEmail: job?.recruiter_email,
+                  }),
+                });
 
-    } catch (err) {
-      console.error("Withdraw failed:", err);
-      Swal.fire({
-        title: '❌ Failed to Withdraw',
-        text: 'Something went wrong while withdrawing your application. Please try again.',
-        icon: 'error',
-        confirmButtonText: 'Retry',
-      });
-    }
-  }}
->
-  {loadingWithdraw ? (
-    <div className="flex items-center gap-2">
-      <BarLoader width={50} height={4} color="#fff" />
-      <span>Withdrawing...</span>
-    </div>
-  ) : (
-    "Withdraw Application"
-  )}
-</Button>
+                // 5️⃣ Success confirmation
+                Swal.fire({
+                  title: "🗑️ Application Withdrawn!",
+                  text: `You have successfully withdrawn your application for ${job.title}.`,
+                  icon: "success",
+                  confirmButtonText: "OK",
+                  confirmButtonColor: "#2563eb",
+                  background: "#f0f9ff",
+                });
+              } catch (err) {
+                console.error("Withdraw failed:", err);
+                Swal.fire({
+                  title: "❌ Failed to Withdraw",
+                  text: "Something went wrong while withdrawing your application. Please try again.",
+                  icon: "error",
+                  confirmButtonText: "Retry",
+                });
+              }
+            }}
+          >
+            {loadingWithdraw ? (
+              <div className="flex items-center gap-2">
+                <BarLoader width={50} height={4} color="#fff" />
+                <span>Withdrawing...</span>
+              </div>
+            ) : (
+              "Withdraw Application"
+            )}
+          </Button>
 
         ) : (
           <ApplyJobDrawer

@@ -73,7 +73,12 @@ export async function getSingleJob(token, {job_id}) {
                 id,
                 candidate_id,
                 resume,
-                status
+                status,
+                name,
+                skills,
+                education,
+                experience,
+                created_at
              )`)
         .eq("id", job_id)
         .single();
