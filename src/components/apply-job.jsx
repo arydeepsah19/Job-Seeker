@@ -11,6 +11,8 @@ import { applyToJob } from "../api/apiApplication";
 import { BarLoader } from "react-spinners";
 import { useUser } from "@clerk/clerk-react";
 import Swal from "sweetalert2";
+import { createNotification } from "../api/apiNotifications";
+import useFetch from "../hooks/use-fetch";
 
 
 const schema = z.object({
@@ -31,6 +33,7 @@ const ApplyJobDrawer = ({user, job, applied=false, fetchJob}) => {
     })
 
     const {loading: loadingApply, error: errorApply, fn: fnApply} = useFetch(applyToJob);
+    const {fn: fnCreateNotification} = useFetch(createNotification);
 
     const onSubmit = async (data) => {
     try {
@@ -46,6 +49,22 @@ const ApplyJobDrawer = ({user, job, applied=false, fetchJob}) => {
       fetchJob();
       reset();
 
+      // Create success notification for candidate
+      try {
+        await fnCreateNotification({
+          user_id: user.id,
+          type: "application_success",
+          title: "Application Submitted Successfully!",
+          message: `Your application for ${job.title} at ${job.company?.name} has been submitted successfully.`,
+          data: {
+            job_id: job.id,
+            company_name: job.company?.name,
+            job_title: job.title
+          }
+        });
+      } catch (notificationError) {
+        console.error("Error creating success notification:", notificationError);
+      }
       // ✅ Send confirmation email to applicant + recruiter
       const response = await fetch(
         "https://spqpxjcfwynwxfgcfday.supabase.co/functions/v1/super-processor",

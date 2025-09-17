@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { SignedIn, SignedOut, UserButton, SignIn, useUser} from "@clerk/clerk-react"
 import { BriefcaseBusiness, PenBox, Heart} from "lucide-react"
 import { useState, useEffect} from "react"
+import NotificationBell from "./notification-bell"
 
 const Header = () => {
 
@@ -34,6 +35,7 @@ const Header = () => {
             <Button variant="outline" onClick={()=> setShowSignIn(true)}>Login</Button>
           </SignedOut>
           <SignedIn>
+            <NotificationBell />
             {user?.unsafeMetadata?.role === "recruiter" && (
               <Link to='/post-job'>
               <Button variant="destructive" className="rounded-full">
