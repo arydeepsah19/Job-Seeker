@@ -49,7 +49,6 @@ const PostJob= ()=> {
     fnCreateJob({
       ...data,
       recruiter_id: user.id,
-      recruiter_email: user.primaryEmailAddress?.emailAddress,
       isOpen: true,
     })
   }
