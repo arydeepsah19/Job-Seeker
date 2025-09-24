@@ -13,7 +13,7 @@ const LandingPage= ()=> {
       <section className="text-center">
         <h1 className="flex flex-col items-center justify-center gradient-title text-4xl font-extrabold sm:text-6xl lg:text-8xl tracking-tighter py-4">Find your Dream Job{" "}
           <span className="flex items-center gap-2 lg:gap-6">
-            and get {" "} <img src="/log3.png" alt="logo" className="h-22 sm:h-30 lg:h-40" />
+            and get {" "} <img src="/log3.png" alt="logo" className="h-24 sm:h-32 lg:h-40" />
           </span>
         </h1>
         <p className="text-gray-300 sm:mt-4 text-xs lg:text-xl">
@@ -123,4 +123,5 @@ const LandingPage= ()=> {
 }
 
 export default LandingPage;
+
 
